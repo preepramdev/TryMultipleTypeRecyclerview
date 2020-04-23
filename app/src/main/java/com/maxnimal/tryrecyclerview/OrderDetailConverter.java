@@ -3,6 +3,7 @@ package com.maxnimal.tryrecyclerview;
 import com.maxnimal.tryrecyclerview.item.BaseOrderDetailItem;
 import com.maxnimal.tryrecyclerview.item.ButtonItem;
 import com.maxnimal.tryrecyclerview.item.EmptyItem;
+import com.maxnimal.tryrecyclerview.item.NoOrderItem;
 import com.maxnimal.tryrecyclerview.item.NoticeItem;
 import com.maxnimal.tryrecyclerview.item.OrderItem;
 import com.maxnimal.tryrecyclerview.item.SectionItem;
@@ -36,9 +37,11 @@ public class OrderDetailConverter {
 
     private static int getTotalPrice(OrderDetail orderDetail) {
         int totalPrice = 0;
-        totalPrice += getTotalFoodPrice(orderDetail.getFoodList());
-        totalPrice += getTotalBookPrice(orderDetail.getBookList());
-        totalPrice += getTotalMusicPrice(orderDetail.getMusicList());
+        if (orderDetail != null) {
+            totalPrice += getTotalFoodPrice(orderDetail.getFoodList());
+            totalPrice += getTotalBookPrice(orderDetail.getBookList());
+            totalPrice += getTotalMusicPrice(orderDetail.getMusicList());
+        }
         return totalPrice;
     }
 
@@ -78,6 +81,10 @@ public class OrderDetailConverter {
 
     public static ButtonItem createButton() {
         return new ButtonItem();
+    }
+
+    public static NoOrderItem createNoOrder() {
+        return new NoOrderItem();
     }
 
     public static EmptyItem createEmpty() {

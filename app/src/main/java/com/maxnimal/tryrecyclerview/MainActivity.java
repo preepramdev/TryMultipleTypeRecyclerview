@@ -139,17 +139,30 @@ public class MainActivity extends AppCompatActivity {
         int musicTitleColor = ContextCompat.getColor(this, R.color.natural_green);
 
         List<BaseOrderDetailItem> orderDetailItemList = new ArrayList<>();
-        orderDetailItemList.add(OrderDetailConverter.createUserDetail(name));
-        orderDetailItemList.add(OrderDetailConverter.createTitle(yourOrderTitle));
-        orderDetailItemList.addAll(OrderDetailConverter.createSectionAndOrder(orderDetail, foodTitle, bookTitle, musicTitle, currency, foodTitleColor, bookTitleColor, musicTitleColor));
-        orderDetailItemList.add(OrderDetailConverter.createTitle(summaryTitle));
-        orderDetailItemList.addAll(OrderDetailConverter.createSummary(orderDetail, foodTitle, bookTitle, musicTitle, currency));
-        orderDetailItemList.add(OrderDetailConverter.createTotal(orderDetail, currency));
-        orderDetailItemList.add(OrderDetailConverter.createNotice());
-        orderDetailItemList.add(OrderDetailConverter.createButton());
+        if (isOrderDetailAvailable(orderDetail)) {
+            orderDetailItemList.add(OrderDetailConverter.createTitle(yourOrderTitle));
+            orderDetailItemList.addAll(OrderDetailConverter.createSectionAndOrder(orderDetail, foodTitle, bookTitle, musicTitle, currency, foodTitleColor, bookTitleColor, musicTitleColor));
+            orderDetailItemList.add(OrderDetailConverter.createTitle(summaryTitle));
+            orderDetailItemList.addAll(OrderDetailConverter.createSummary(orderDetail, foodTitle, bookTitle, musicTitle, currency));
+            orderDetailItemList.add(OrderDetailConverter.createTotal(orderDetail, currency));
+            orderDetailItemList.add(OrderDetailConverter.createNotice());
+            orderDetailItemList.add(OrderDetailConverter.createButton());
+        } else {
+            orderDetailItemList.add(OrderDetailConverter.createTitle(yourOrderTitle));
+            orderDetailItemList.add(OrderDetailConverter.createNoOrder());
+            orderDetailItemList.add(OrderDetailConverter.createTitle(summaryTitle));
+            orderDetailItemList.add(OrderDetailConverter.createTotal(orderDetail, currency));
+        }
         orderDetailItemList.add(OrderDetailConverter.createEmpty());
 
          orderAdapter.setOrderItemList(orderDetailItemList);
          orderAdapter.notifyDataSetChanged();
+    }
+
+    private boolean isOrderDetailAvailable(OrderDetail orderDetail) {
+        return orderDetail != null &&
+                ((orderDetail.getFoodList() != null && !orderDetail.getFoodList().isEmpty()) ||
+                        (orderDetail.getBookList() != null && !orderDetail.getBookList().isEmpty()) ||
+                        (orderDetail.getMusicList() != null && !orderDetail.getMusicList().isEmpty()));
     }
 }

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.maxnimal.tryrecyclerview.item.BaseOrderDetailItem;
 import com.maxnimal.tryrecyclerview.item.ButtonItem;
 import com.maxnimal.tryrecyclerview.item.EmptyItem;
+import com.maxnimal.tryrecyclerview.item.NoOrderItem;
 import com.maxnimal.tryrecyclerview.item.NoticeItem;
 import com.maxnimal.tryrecyclerview.item.OrderItem;
 import com.maxnimal.tryrecyclerview.item.SectionItem;
@@ -19,6 +20,7 @@ import com.maxnimal.tryrecyclerview.item.TotalItem;
 import com.maxnimal.tryrecyclerview.item.UserDetailItem;
 import com.maxnimal.tryrecyclerview.viewholder.ButtonViewHolder;
 import com.maxnimal.tryrecyclerview.viewholder.EmptyViewHolder;
+import com.maxnimal.tryrecyclerview.viewholder.NoOrderViewHolder;
 import com.maxnimal.tryrecyclerview.viewholder.NoticeViewHolder;
 import com.maxnimal.tryrecyclerview.viewholder.OrderViewHolder;
 import com.maxnimal.tryrecyclerview.viewholder.SectionViewHolder;
@@ -92,6 +94,10 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_empty, parent, false);
             return new EmptyViewHolder(view);
 
+        } else if (viewType == OrderDetailType.TYPE_NO_ORDER) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_no_order, parent, false);
+            return new NoOrderViewHolder(view);
+
         }
         throw new NullPointerException("View Type " + viewType + " doesn't match with any existing order detail type");
 
@@ -146,6 +152,11 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
             EmptyItem emptyItem = (EmptyItem) orderDetailItem;
             setupEmpty(emptyViewHolder, emptyItem);
+
+        } else if (holder instanceof NoOrderViewHolder) {
+            NoOrderViewHolder noOrderViewHolder = (NoOrderViewHolder) holder;
+            NoOrderItem noOrderItem = (NoOrderItem) orderDetailItem;
+            setupNoOrder(noOrderViewHolder, noOrderItem);
 
         }
     }
@@ -202,6 +213,10 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private void setupEmpty(EmptyViewHolder emptyViewHolder, EmptyItem emptyItem) {
+        // Nothing to do ...
+    }
+
+    private void setupNoOrder(NoOrderViewHolder noOrderViewHolder, NoOrderItem noOrderItem) {
         // Nothing to do ...
     }
 
