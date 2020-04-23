@@ -5,7 +5,7 @@ import com.maxnimal.tryrecyclerview.OrderDetailType;
 public class UserDetailItem extends BaseOrderDetailItem {
     private String name;
 
-    public UserDetailItem(int type) {
+    public UserDetailItem() {
         super(OrderDetailType.TYPE_USER_DETAIL);
     }
 

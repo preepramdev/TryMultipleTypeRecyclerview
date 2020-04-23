@@ -1,10 +1,17 @@
 package com.maxnimal.tryrecyclerview;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class OrderDetail {
+    @SerializedName("food_list")
     private List<Food> foodList;
+
+    @SerializedName("book_list")
     private List<Book> bookList;
+
+    @SerializedName("music_list")
     private List<Music> musicList;
 
     public List<Food> getFoodList() {
@@ -32,6 +39,7 @@ public class OrderDetail {
     }
 
     public static class Food {
+        @SerializedName("order_name")
         private String orderName;
         private int amount;
         private int price;
@@ -62,9 +70,12 @@ public class OrderDetail {
     }
 
     public static class Book {
+        @SerializedName("ISBN")
         private String isbn;
+        @SerializedName("book_name")
         private String bookName;
         private String author;
+        @SerializedName("publish_date")
         private String publishDate;
         private String publication;
         private int price;
@@ -130,6 +141,7 @@ public class OrderDetail {
     public static class Music {
         private String artist;
         private String album;
+        @SerializedName("release_date")
         private String releaseDate;
         private int track;
         private int price;

@@ -5,7 +5,7 @@ import com.maxnimal.tryrecyclerview.OrderDetailType;
 public class TitleItem extends BaseOrderDetailItem {
     private String title;
 
-    public TitleItem(int type) {
+    public TitleItem() {
         super(OrderDetailType.TYPE_TITLE);
     }
 

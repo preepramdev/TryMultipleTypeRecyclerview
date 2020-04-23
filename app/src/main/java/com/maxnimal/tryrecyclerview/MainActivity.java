@@ -1,15 +1,23 @@
 package com.maxnimal.tryrecyclerview;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.maxnimal.tryrecyclerview.item.BaseOrderDetailItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+
+    private RecyclerView rvOrderDetail;
+    private OrderAdapter orderAdapter;
 
     private OrderDetail mOrderDetail;
 
@@ -20,7 +28,32 @@ public class MainActivity extends AppCompatActivity {
 
         mOrderDetail = new OrderDetail();
 
-        fakeApi();
+        bindView();
+        setupView();
+//        fakeApi();
+        callService();
+    }
+
+    private void bindView() {
+        rvOrderDetail = (RecyclerView) findViewById(R.id.rv_order_detail);
+    }
+
+    private void setupView() {
+        rvOrderDetail.setLayoutManager(new LinearLayoutManager(this));
+        orderAdapter = new OrderAdapter();
+        rvOrderDetail.setAdapter(orderAdapter);
+
+        orderAdapter.setOnItemClickListener(new OrderAdapter.OnItemClickListener() {
+            @Override
+            public void onPositiveButtonClick() {
+                Toast.makeText(MainActivity.this, "Positive Button Clicked", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNegativeButtonClick() {
+                Toast.makeText(MainActivity.this, "Negative Button Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void fakeApi() {
@@ -77,5 +110,41 @@ public class MainActivity extends AppCompatActivity {
         mOrderDetail.setBookList(bookList);
         mOrderDetail.setMusicList(musicList);
         Log.e(TAG, "fakeApi: mOrderDetail " + mOrderDetail);
+
+        setOrderDetail(mOrderDetail);
+    }
+
+    private void callService() {
+        FakeNetwork.getFakeOrderDetail(new FakeNetwork.OnResultCallback() {
+            @Override
+            public void onOrderDetailCallback(OrderDetail orderDetail) {
+                setOrderDetail(orderDetail);
+            }
+        });
+    }
+
+    private void setOrderDetail(OrderDetail orderDetail) {
+        String name = "Sleeping For Less";
+        String yourOrderTitle = getString(R.string.your_order);
+        String summaryTitle = getString(R.string.summary);
+
+        String foodTitle = getString(R.string.food);
+        String bookTitle = getString(R.string.book);
+        String musicTitle = getString(R.string.music);
+        String currency = getString(R.string.baht_unit);
+
+        List<BaseOrderDetailItem> orderDetailItemList = new ArrayList<>();
+        orderDetailItemList.add(OrderDetailConverter.createUserDetail(name));
+        orderDetailItemList.add(OrderDetailConverter.createTitle(yourOrderTitle));
+        orderDetailItemList.addAll(OrderDetailConverter.createSectionAndOrder(orderDetail, foodTitle, bookTitle, musicTitle, currency));
+        orderDetailItemList.add(OrderDetailConverter.createTitle(summaryTitle));
+        orderDetailItemList.addAll(OrderDetailConverter.createSummary(orderDetail, foodTitle, bookTitle, musicTitle, currency));
+        orderDetailItemList.add(OrderDetailConverter.createTotal(orderDetail, currency));
+        orderDetailItemList.add(OrderDetailConverter.createNotice());
+        orderDetailItemList.add(OrderDetailConverter.createButton());
+        orderDetailItemList.add(OrderDetailConverter.createEmpty());
+
+         orderAdapter.setOrderItemList(orderDetailItemList);
+         orderAdapter.notifyDataSetChanged();
     }
 }
