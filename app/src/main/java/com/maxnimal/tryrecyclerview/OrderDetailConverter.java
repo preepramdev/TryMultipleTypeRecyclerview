@@ -84,18 +84,25 @@ public class OrderDetailConverter {
         return new EmptyItem();
     }
 
-    public static List<BaseOrderDetailItem> createSectionAndOrder(OrderDetail orderDetail, String foodTitle, String bookTitle, String musicTitle, String currency) {
+    public static List<BaseOrderDetailItem> createSectionAndOrder(OrderDetail orderDetail,
+                                                                  String foodTitle,
+                                                                  String bookTitle,
+                                                                  String musicTitle,
+                                                                  String currency,
+                                                                  int foodTitleColor,
+                                                                  int bookTitleColor,
+                                                                  int musicTitleColor) {
         List<BaseOrderDetailItem> orderDetailItemList = new ArrayList<>();
-        orderDetailItemList.addAll(getFoodOrderDetailList(orderDetail.getFoodList(), foodTitle, currency));
-        orderDetailItemList.addAll(getBookOrderDetailList(orderDetail.getBookList(), bookTitle, currency));
-        orderDetailItemList.addAll(getMusicOrderDetailList(orderDetail.getMusicList(), musicTitle, currency));
+        orderDetailItemList.addAll(getFoodOrderDetailList(orderDetail.getFoodList(), foodTitle, currency, foodTitleColor));
+        orderDetailItemList.addAll(getBookOrderDetailList(orderDetail.getBookList(), bookTitle, currency, bookTitleColor));
+        orderDetailItemList.addAll(getMusicOrderDetailList(orderDetail.getMusicList(), musicTitle, currency, musicTitleColor));
         return orderDetailItemList;
     }
 
-    private static List<BaseOrderDetailItem> getFoodOrderDetailList(List<OrderDetail.Food> foodList, String foodTitle, String currency) {
+    private static List<BaseOrderDetailItem> getFoodOrderDetailList(List<OrderDetail.Food> foodList, String foodTitle, String currency, int foodTitleColor) {
         List<BaseOrderDetailItem> foodOrderDetailList = new ArrayList<>();
         if (foodList != null && foodList.size() > 0) {
-            foodOrderDetailList.add(createSection(foodTitle));
+            foodOrderDetailList.add(createSection(foodTitle, foodTitleColor));
             for (OrderDetail.Food food : foodList) {
                 String name = food.getOrderName();
                 String detail = "x" + food.getAmount();
@@ -106,10 +113,10 @@ public class OrderDetailConverter {
         return foodOrderDetailList;
     }
 
-    private static List<BaseOrderDetailItem> getBookOrderDetailList(List<OrderDetail.Book> bookList, String bookTitle, String currency) {
+    private static List<BaseOrderDetailItem> getBookOrderDetailList(List<OrderDetail.Book> bookList, String bookTitle, String currency, int bookTitleColor) {
         List<BaseOrderDetailItem> bookOrderDetailList = new ArrayList<>();
         if (bookList != null && bookList.size() > 0) {
-            bookOrderDetailList.add(createSection(bookTitle));
+            bookOrderDetailList.add(createSection(bookTitle, bookTitleColor));
             for (OrderDetail.Book book : bookList) {
                 String name = book.getBookName();
                 String detail = book.getAuthor();
@@ -120,10 +127,10 @@ public class OrderDetailConverter {
         return bookOrderDetailList;
     }
 
-    private static List<BaseOrderDetailItem> getMusicOrderDetailList(List<OrderDetail.Music> musicList, String musicTitle, String currency) {
+    private static List<BaseOrderDetailItem> getMusicOrderDetailList(List<OrderDetail.Music> musicList, String musicTitle, String currency, int musicTitleColor) {
         List<BaseOrderDetailItem> musicOrderDetailList = new ArrayList<>();
         if (musicList != null && musicList.size() > 0) {
-            musicOrderDetailList.add(createSection(musicTitle));
+            musicOrderDetailList.add(createSection(musicTitle, musicTitleColor));
             for (OrderDetail.Music music : musicList) {
                 String name = music.getAlbum();
                 String detail = music.getArtist();
@@ -134,9 +141,10 @@ public class OrderDetailConverter {
         return musicOrderDetailList;
     }
 
-    private static SectionItem createSection(String title) {
+    private static SectionItem createSection(String title, int titleColor) {
         SectionItem sectionItem = new SectionItem();
         sectionItem.setSection(title);
+        sectionItem.setBackgroundColor(titleColor);
         return sectionItem;
     }
 

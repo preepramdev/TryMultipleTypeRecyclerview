@@ -160,6 +160,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private void setupSection(SectionViewHolder sectionViewHolder, SectionItem sectionItem) {
         sectionViewHolder.tvSection.setText(sectionItem.getSection());
+        sectionViewHolder.layoutSectionContainer.setBackgroundColor(sectionItem.getBackgroundColor());
     }
 
     private void setupOrder(OrderViewHolder orderViewHolder, OrderItem orderItem) {

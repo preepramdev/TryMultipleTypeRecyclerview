@@ -1,6 +1,7 @@
 package com.maxnimal.tryrecyclerview;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -133,10 +134,14 @@ public class MainActivity extends AppCompatActivity {
         String musicTitle = getString(R.string.music);
         String currency = getString(R.string.baht_unit);
 
+        int foodTitleColor = ContextCompat.getColor(this, R.color.sky_light_blue);
+        int bookTitleColor = ContextCompat.getColor(this, R.color.funny_dark_pink);
+        int musicTitleColor = ContextCompat.getColor(this, R.color.natural_green);
+
         List<BaseOrderDetailItem> orderDetailItemList = new ArrayList<>();
         orderDetailItemList.add(OrderDetailConverter.createUserDetail(name));
         orderDetailItemList.add(OrderDetailConverter.createTitle(yourOrderTitle));
-        orderDetailItemList.addAll(OrderDetailConverter.createSectionAndOrder(orderDetail, foodTitle, bookTitle, musicTitle, currency));
+        orderDetailItemList.addAll(OrderDetailConverter.createSectionAndOrder(orderDetail, foodTitle, bookTitle, musicTitle, currency, foodTitleColor, bookTitleColor, musicTitleColor));
         orderDetailItemList.add(OrderDetailConverter.createTitle(summaryTitle));
         orderDetailItemList.addAll(OrderDetailConverter.createSummary(orderDetail, foodTitle, bookTitle, musicTitle, currency));
         orderDetailItemList.add(OrderDetailConverter.createTotal(orderDetail, currency));
