@@ -2,6 +2,7 @@ package com.maxnimal.tryrecyclerview;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.maxnimal.tryrecyclerview.item.BaseOrderDetailItem;
+import com.maxnimal.tryrecyclerview.item.OrderItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +55,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNegativeButtonClick() {
                 Toast.makeText(MainActivity.this, "Negative Button Clicked", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onOrderRemove(OrderItem orderItem) {
+                List<BaseOrderDetailItem> oldOrderItemList = createOrderDetailList(mOrderDetail);
+                boolean isOrderRemoved = removeOrder(mOrderDetail, orderItem);
+                List<BaseOrderDetailItem> newOrderItemList = createOrderDetailList(mOrderDetail);
+
+                if (isOrderRemoved) {
+                    updateOrderDetailList(oldOrderItemList, newOrderItemList);
+                    Toast.makeText(MainActivity.this, "Order " + orderItem.getName() + " was removed", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -112,19 +126,22 @@ public class MainActivity extends AppCompatActivity {
         mOrderDetail.setMusicList(musicList);
         Log.e(TAG, "fakeApi: mOrderDetail " + mOrderDetail);
 
-        setOrderDetail(mOrderDetail);
+//        setOrderDetail(mOrderDetail);
     }
 
     private void callService() {
         FakeNetwork.getFakeOrderDetail(new FakeNetwork.OnResultCallback() {
             @Override
             public void onOrderDetailCallback(OrderDetail orderDetail) {
-                setOrderDetail(orderDetail);
+                mOrderDetail = orderDetail;
+                List<BaseOrderDetailItem> orderDetailItemList = createOrderDetailList(orderDetail);
+                List<BaseOrderDetailItem> emptyList = new ArrayList<>();
+                updateOrderDetailList(emptyList, orderDetailItemList);
             }
         });
     }
 
-    private void setOrderDetail(OrderDetail orderDetail) {
+    private List<BaseOrderDetailItem> createOrderDetailList (OrderDetail orderDetail) {
         String name = "Sleeping For Less";
         String yourOrderTitle = getString(R.string.your_order);
         String summaryTitle = getString(R.string.summary);
@@ -139,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         int musicTitleColor = ContextCompat.getColor(this, R.color.natural_green);
 
         List<BaseOrderDetailItem> orderDetailItemList = new ArrayList<>();
+        orderDetailItemList.add(OrderDetailConverter.createUserDetail(name));
         if (isOrderDetailAvailable(orderDetail)) {
             orderDetailItemList.add(OrderDetailConverter.createTitle(yourOrderTitle));
             orderDetailItemList.addAll(OrderDetailConverter.createSectionAndOrder(orderDetail, foodTitle, bookTitle, musicTitle, currency, foodTitleColor, bookTitleColor, musicTitleColor));
@@ -154,9 +172,13 @@ public class MainActivity extends AppCompatActivity {
             orderDetailItemList.add(OrderDetailConverter.createTotal(orderDetail, currency));
         }
         orderDetailItemList.add(OrderDetailConverter.createEmpty());
+        return orderDetailItemList;
+    }
 
-         orderAdapter.setOrderItemList(orderDetailItemList);
-         orderAdapter.notifyDataSetChanged();
+    private void updateOrderDetailList(List<BaseOrderDetailItem> oldOrderItemList, List<BaseOrderDetailItem> newOrderItemList) {
+        orderAdapter.setOrderItemList(newOrderItemList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new OrderListDiffCallback(oldOrderItemList, newOrderItemList));
+        diffResult.dispatchUpdatesTo(orderAdapter);
     }
 
     private boolean isOrderDetailAvailable(OrderDetail orderDetail) {
@@ -164,5 +186,62 @@ public class MainActivity extends AppCompatActivity {
                 ((orderDetail.getFoodList() != null && !orderDetail.getFoodList().isEmpty()) ||
                         (orderDetail.getBookList() != null && !orderDetail.getBookList().isEmpty()) ||
                         (orderDetail.getMusicList() != null && !orderDetail.getMusicList().isEmpty()));
+    }
+
+    private boolean removeOrder(OrderDetail orderDetail, OrderItem orderItem) {
+        if (orderDetail != null) {
+            int index = getFoodOrderIndex(orderDetail.getFoodList(), orderItem);
+            if (index != -1) {
+                orderDetail.getFoodList().remove(index);
+                return true;
+            }
+            index = getBookOrderIndex(orderDetail.getBookList(), orderItem);
+            if (index != -1) {
+                orderDetail.getBookList().remove(index);
+                return true;
+            }
+            index = getMusicOrderIndex(orderDetail.getMusicList(), orderItem);
+            if (index != -1) {
+                orderDetail.getMusicList().remove(index);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int getFoodOrderIndex(List<OrderDetail.Food> foodOrderDetailList, OrderItem orderItem) {
+        if (foodOrderDetailList != null && orderItem != null) {
+            for (int index = 0; index < foodOrderDetailList.size(); index++) {
+                OrderDetail.Food food = foodOrderDetailList.get(index);
+                if (food.getOrderName().equals(orderItem.getName())) {
+                    return index;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private int getBookOrderIndex(List<OrderDetail.Book> bookOrderDetailList, OrderItem orderItem) {
+        if (bookOrderDetailList != null && orderItem != null) {
+            for (int index = 0; index < bookOrderDetailList.size(); index++) {
+                OrderDetail.Book book = bookOrderDetailList.get(index);
+                if (book.getBookName().equals(orderItem.getName())) {
+                    return index;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private int getMusicOrderIndex(List<OrderDetail.Music> musicOrderDetailList, OrderItem orderItem) {
+        if (musicOrderDetailList != null && orderItem != null) {
+            for (int index = 0; index < musicOrderDetailList.size(); index++) {
+                OrderDetail.Music music = musicOrderDetailList.get(index);
+                if (music.getAlbum().equals(orderItem.getName())) {
+                    return index;
+                }
+            }
+        }
+        return -1;
     }
 }
